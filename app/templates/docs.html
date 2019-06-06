@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Model API Demo - docs</title>
+  </head>
+  <body>
+    <h3>Model API Documentation</h3>
+    <p>The model API receives a JSON request containing model features:</p>
+    <ul>
+      <li>INDUS - proportion of non-retail business acres per town</li>
+      <li>RM - average number of rooms per dwelling</li>
+      <li>AGE - proportion of owner-occupied units built prior to 1940</li>
+      <li>DIS - weighted distances to five Boston employment centres</li>
+      <li>NOX - nitric oxides concentration (parts per 10 million)</li>
+      <li>PTRATIO - pupil-teacher ratio by town</li>
+    </ul>
+    <p>The model API returns a JSON response containing:</p>
+    <ul>
+      <li>ESTIMATE - median value estimate of the owner-occupied home in $1000’s</li>
+      <li>MISSING_DATA - whether or not the received request was missing any feature data</li>
+    </ul>
+  </body>
+</html>
