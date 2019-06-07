@@ -1,14 +1,20 @@
+# app/app.py
+
+# Common python package imports.
 from flask import Flask, jsonify, request, render_template
 import pickle
 import numpy as np
-from estimators.config import MODEL_CONFIG
+
+# Import from model_api/app/features.py.
+from features import FEATURES
 
 
+# Initialize the app and set a secret_key.
 app = Flask(__name__)
 app.secret_key = 'something_secret'
 
-MODEL = pickle.load(open('estimators/model.pkl', 'rb'))
-FEATURES = MODEL_CONFIG['feature_names']
+# Load the pickled model.
+MODEL = pickle.load(open('model.pkl', 'rb'))
 
 
 @app.route('/')
@@ -20,43 +26,38 @@ def docs():
 @app.route('/api', methods=['GET'])
 def api():
     """Handle request and output model score in json format."""
+    # Handle empty requests.
     if not request.json:
         return jsonify({'error': 'no request received'})
-    # Parse request args and format into feature array for prediction.
+
+    # Parse request args into feature array for prediction.
     x_list, missing_data = parse_args(request.json)
     x_array = np.array([x_list])
-    # Predict on features provided and return response in JSON.
+
+    # Predict on x_array and return JSON response.
     estimate = int(MODEL.predict(x_array)[0])
     response = dict(ESTIMATE=estimate, MISSING_DATA=missing_data)
+
     return jsonify(response)
 
 
 def parse_args(request_dict):
-    """Parse model features from incoming requests formatted in JSON.
-
-    Arguments:
-        request_dict (dict) - contains request information.
-
-    Returns:
-        x_list (list) - ordered features for model
-        missing_data (bool) - flag informing API user whether or not features
-            were missing from their request.
-    """
+    """Parse model features from incoming requests formatted in JSON."""
+    # Initialize missing_data as False.
     missing_data = False
+
+    # Parse out the features from the request_dict.
     x_list = []
-    # Iterate through the features list and append to x_list in correct order.
     for feature in FEATURES:
         value = request_dict.get(feature, None)
         if value:
             x_list.append(value)
         else:
-            # If the feature is missing, append a 0 and notify of missing data.
+            # Handle missing features.
             x_list.append(0)
             missing_data = True
     return x_list, missing_data
 
 
-
 if __name__ == '__main__':
-    # For testing purposes.
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)

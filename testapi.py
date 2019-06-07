@@ -1,16 +1,17 @@
+# testapi.py
+
+# Common python package imports.
 import requests
 import numpy as np
 import pandas as pd
 from sklearn import datasets
-from app.estimators.config import MODEL_CONFIG
+
+# Import from model_api/app/estimators/config.py.
+from app.features import FEATURES
 
 
 def get_feature_dists():
-    """Get mean and stdev of features for random data generator.
-
-    Returns:
-        dist_dict (dict) - {feature_name: (feature_mean, feature_stdev)}
-    """
+    """Get mean and stdev of features for random data generator."""
     data = datasets.load_boston()
     df = pd.DataFrame(data.data, columns=data.feature_names)
     pdf = df.describe().T[['mean', 'std']]
@@ -21,15 +22,7 @@ def get_feature_dists():
 
 
 def test_api(feature_names, dist_dict, url='http://0.0.0.0:5000/api'):
-    """Test the API by making a call and return the response.
-
-    Arguments:
-        feature_names (list) - features used in model
-        dist_dict (dict) - {feature_name: (feature_mean, feature_stdev)}
-
-    Returns:
-        response (dict)
-    """
+    """Test the API by making a call and return the response."""
     params = {}
     for feature in feature_names:
         params[feature] = np.random.normal(*dist_dict[feature])
@@ -43,13 +36,16 @@ def test_api(feature_names, dist_dict, url='http://0.0.0.0:5000/api'):
 
 
 if __name__ == '__main__':
-    feature_names = MODEL_CONFIG['feature_names']
     dist_dict = get_feature_dists()
     ### Run locally outside of docker
-    # url = 'http://0.0.0.0:5000/api'
+    url = 'http://0.0.0.0:5000/api'
     ### Connect to docker container docker run -p 8000:5000 blemi/model_api
-    url = 'http://0.0.0.0:8000/api'
+    # url = 'http://0.0.0.0:8000/api'
     ### Connect to api on AWS
     # url = 'http://ApiDemo-env-1.ge3hik39wt.us-west-2.elasticbeanstalk.com/api'
     for _ in range(1):
-        resp = test_api(feature_names, dist_dict, url=url)
+        resp = test_api(FEATURES, dist_dict, url=url)
+
+
+    # CURL TEST
+    # curl -X GET 'http://0.0.0.0:5000/api' --data {'INDUS': 5.9811172572674245, 'RM': 4.714079929999944, 'AGE': 80.57613195977545, 'DIS': 3.7703834318716734, 'NOX': 0.6968281505648362, 'PTRATIO': 13.629968799895778}
