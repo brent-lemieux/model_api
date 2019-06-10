@@ -8,4 +8,4 @@
 
 
 ### Develop and Deploy the API
-Follow along at ***link coming soon***.
+Follow along **[here](https://medium.com/@brent_64035)!**.
