@@ -8,4 +8,4 @@
 
 
 ### Develop and Deploy the API
-Follow along **[here](https://medium.com/@brent_64035)**
+Follow along **[here](https://medium.com/@brent_64035/deploy-a-machine-learning-model-as-an-api-on-aws-43e92d08d05b)**
